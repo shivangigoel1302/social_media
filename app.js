@@ -1,16 +1,15 @@
 const express = require('express');
 const app = express();
 const morgan = require("morgan");
-
-//bring in routes
-const postRoutes = require('./routes/posts');
+const mongoose = require("mongoose");
 const bodyParser = require('body-parser');
-//load env variable
+const cookieParser = require('cookie-parser');
+const expressValidator = require('express-validator');
 const dotenv = require("dotenv");
 dotenv.config();
-const mongoose = require("mongoose");
 
-const expressValidator = require('express-validator');
+//load env variable
+
 
 //db connection
 // mongoose.Promise = global.Promise;
@@ -30,11 +29,18 @@ mongoose.connection.on('error', err => {
 // 	next();
 // };
 
+//bring in routes
+const postRoutes = require('./routes/posts');
+const authRoutes = require('./routes/auth');
+
+
 //middleware 
 app.use(morgan("dev"));
 app.use(bodyParser.json());
 app.use(expressValidator());
+app.use(cookieParser());
 app.use('/',postRoutes);
+app.use("/",authRoutes);
 
 const port = process.env.PORT || 8080;
 app.listen(port,()=>{console.log(`A node js api is listening on port ${port}`)});
